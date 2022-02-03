@@ -51,85 +51,59 @@ export function getStrapiURL(path) {
  * @param {string} options.locale The current locale specified in router.locale
  * @param {boolean} options.preview router isPreview value
  */
-
-   export async function getPortfolioData({ slug, locale, preview }) {
+  //  { slug, locale, preview }
+   export const getPortfolios = async () => {
     // Find the pages that match this slug
     const gqlEndpoint = getStrapiURL("/graphql")
-    console.log("slug", slug)
-    console.log("locale", locale)
-    console.log("gqlEndpoint", gqlEndpoint)
-    const pagesRes = await fetch(gqlEndpoint, {
+    // console.log("slug", slug)
+    // console.log("locale", locale)
+    // console.log("gqlEndpoint", gqlEndpoint)
+    const portfolioDataRes = await fetch(gqlEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-
-
         query: `
-        fragment CollectionParts on UploadFileRelationResponseCollection {
-          data {
-            id
-                attributes {
-                    alternativeText
-                    width
-                    height
-                    mime
-                    url
-                    formats
-                  }
-          }
-        }
-          fragment FileParts on UploadFileEntityResponse {
+        query {
+          portfolios {
             data {
-              id
               attributes {
-                alternativeText
-                width
-                height
-                mime
-                url
-                formats
+                title
+                description
+                slug
+                background
+                coverImg {
+                  data {
+                    attributes {
+                    name
+                    }
+                  }
+                }
               }
             }
+            
           }
-
-          query GetPortfolio(
-            $slug: String!
-            $publicationState: PublicationState!
-            $locale: I18NLocaleCode!
-
-          ) {
-            portfolio(){
-                data {
-                    id
-                  attributes {
-                    title
-                    backgroundColor
-                    description
-
-                }
-            }
-          }`,
-        variables: {
-            slug,
-            publicationState: preview ? "PUBLISHED" : "DRAFT",
-            locale,
-            },
+        }`,
+        // variables: {
+        //     slug,
+        //     publicationState: preview ? "PUBLISHED" : "DRAFT",
+        //     locale,
+        //     },
         }),
     })
 
 
-    const portfolioData = await portfolioRes.json()
+    const portfolioData = await portfolioDataRes.json()
+    //  console.log("portfolioData", portfolioData.data.portfolios.data)
+    //  if (portfolioData.errors) {
+    //    throw new Error(portfolioData.errors)
+    //  }
+    //  if (portfolioData.data?.portfolios = null || portfolioData.data.portfolios.length === 0) {
+    //      return null
+    //  }
 
-    if (portfolioData.errors) {
-      throw new Error(portfolioData.errors)
-    }
-    if (portfolio.data?.portfolios = null || portfolio.data.pages.lenght === 0) {
-        return null
-    }
-
-    return pagesData.data.pages
+     return portfolioData.data.portfolios
 
 }
 
